@@ -2,24 +2,14 @@ version: "3.8"
 
 services:
   db01:
-    image: "postgres:9.5"
+    build: .
     container_name: DB01
+    entrypoint: bash entrypoint.sh
+#    command: postgres -c config-file=/etc/postgresql.conf
     environment:
-      - POSTGRES_USER=t2elzeth
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_PORT=5432
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-      - ./db01/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
-    
-  db02:
-    image: "postgres:9.5"
-    container_name: DB02
-    environment:
-      - POSTGRES_USER=t2elzeth
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_PORT=5432
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
+      - ./db01/postgresql.conf:/etc/postgresql.conf
+      - ./db01/pg_hba.conf:/etc/postgresql/9.5/main/pg_hba.conf
+      - ./backups/data:/var/lib/postgresql/9.5/main
+      - ./backups:/backups
